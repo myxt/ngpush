@@ -1,5 +1,5 @@
 {ezscript_require(array('ezjsc::jquery', 'ezjsc::jqueryio'))}
-<h1 class="context-title">Netgen Push - {$node.name} - [{$node.class_name}]</h1>
+<h1 class="context-title">Push - {$node.name} - [{$node.class_name}]</h1>
 
 {def
 	$push_blocks = ezini('PushNodeSettings', 'Blocks', 'ngpush.ini')
@@ -123,10 +123,10 @@ var ngpush_text_maxlength_error = "{"Message is too long!"|i18n("ngpush/status")
 				'fb_message',			cond(
 														and(ezini_hasvariable($entry, 'attrId_message', 'ngpush.ini'), ezini($entry, 'attrId_message', 'ngpush.ini')[$node.class_identifier]),
 														$node.data_map[ezini($entry, 'attrId_message', 'ngpush.ini')[$node.class_identifier]].content.output.output_text|ngpush_xml_clean),
-				'fb_picture',			cond(
-														and(ezini_hasvariable($entry, 'attrId_picture', 'ngpush.ini'), ezini($entry, 'attrId_picture', 'ngpush.ini')[$node.class_identifier], $node.data_map[ezini($entry, 'attrId_picture', 'ngpush.ini')[$node.class_identifier]].has_content),
-														cond($is_admin|not, concat('/content/download/',$node.data_map[ezini($entry, 'attrId_picture', 'ngpush.ini')[$node.class_identifier]].contentobject_id,'/',$node.data_map[ezini($entry, 'attrId_picture', 'ngpush.ini')[$node.class_identifier]].id,'/file/',$node.data_map[ezini($entry, 'attrId_picture', 'ngpush.ini')[$node.class_identifier]].content.original_filename)|ezurl(no, full),
-															concat('http://',$SiteURL,'/content/download/',$node.data_map[ezini($entry, 'attrId_picture', 'ngpush.ini')[$node.class_identifier]].contentobject_id,'/',$node.data_map[ezini($entry, 'attrId_picture', 'ngpush.ini')[$node.class_identifier]].id,'/file/',$node.data_map[ezini($entry, 'attrId_picture', 'ngpush.ini')[$node.class_identifier]].content.original_filename))),
+				'fb_picture',			cond( and( ezini_hasvariable( $entry, 'attrId_picture', 'ngpush.ini'),
+                                                                           ezini( $entry, 'attrId_picture', 'ngpush.ini' )[$node.class_identifier], $node.data_map[ezini($entry, 'attrId_picture', 'ngpush.ini')[$node.class_identifier]].has_content),
+                                                                cond($is_admin|not, concat('/content/download/',$node.data_map[ezini($entry, 'attrId_picture', 'ngpush.ini')[$node.class_identifier]].contentobject_id,'/',$node.data_map[ezini($entry, 'attrId_picture', 'ngpush.ini')[$node.class_identifier]].id,'/file/',$node.data_map[ezini($entry, 'attrId_picture', 'ngpush.ini')[$node.class_identifier]].content.original_filename)|ezurl(no, full),
+                                                                            concat('http://',$SiteURL,'/content/download/',$node.data_map[ezini($entry, 'attrId_picture', 'ngpush.ini')[$node.class_identifier]].contentobject_id,'/',$node.data_map[ezini($entry, 'attrId_picture', 'ngpush.ini')[$node.class_identifier]].id,'/file/',$node.data_map[ezini($entry, 'attrId_picture', 'ngpush.ini')[$node.class_identifier]].content.original_filename))),
 				'fb_link',				$NodeURL
 			)}
 			<table cellspacing="0" class="list ngpush-block type-{$account.Type}" id="ngpush-{$entry}">
