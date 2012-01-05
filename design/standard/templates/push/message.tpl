@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="hr-HR" lang="hr-HR">
 <head>
 
-<title>Netgen Push - Message</title>
+<title>Push - Message</title>
 
 <meta name="Content-Type" content="text/html; charset=utf-8" />
 <meta name="Content-language" content="hr-HR" />
