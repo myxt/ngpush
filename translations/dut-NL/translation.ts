@@ -5,7 +5,7 @@
     <name>design/admin/popupmenu</name>
     <message>
         <source>Push node</source>
-        <translation>Push item</translation>
+        <translation>Item pushen</translation>
     </message>
 </context>
 <context>
@@ -28,7 +28,7 @@
     </message>
     <message>
         <source>You have %number characters remaining.</source>
-        <translation>%number tekens over.</translation>
+        <translation>Nog %number tekens beschikbaar.</translation>
     </message>
     <message>
         <source>Push</source>
