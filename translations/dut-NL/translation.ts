@@ -36,7 +36,7 @@
     </message>
     <message>
         <source>Push to all services</source>
-        <translation type="unfinished">Item naar alle sociale media pushen</translation>
+        <translation>Item naar alle sociale media pushen</translation>
     </message>
     <message>
         <source>No defined push services.</source>
