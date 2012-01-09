@@ -24,7 +24,7 @@
     </message>
     <message>
         <source>Waiting...</source>
-        <translation>Een moment geduld...</translation>
+        <translation>Wachten...</translation>
     </message>
     <message>
         <source>You have %number characters remaining.</source>
