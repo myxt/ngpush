@@ -193,6 +193,7 @@ var ngpush_text_maxlength_error = "{"Message is too long!"|i18n("ngpush/status")
 
 <div class="block">
 	<input type="button" value="{"Push to all services"|i18n("ngpush/status")}" class="push-all defaultbutton" />
+        <a class="button" href={$node.url_alias|ezurl}>{'Skip'|i18n("ngpush/status")}</a>
 </div>
 
 </div>

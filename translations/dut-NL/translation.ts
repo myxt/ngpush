@@ -42,6 +42,10 @@
         <source>No defined push services.</source>
         <translation>Geen sociale media gedefinieerd.</translation>
     </message>
+    <message>
+        <source>Skip</source>
+        <translation>Overslaan</translation>
+    </message>
 </context>
 <context>
     <name>ngpush/ui</name>
