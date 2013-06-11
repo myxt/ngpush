@@ -15,27 +15,40 @@ class ngPushTwitterBase extends ngPushBase
 	public function requestToken( $Account )
 	{
 		$NGPushIni = eZINI::instance( 'ngpush.ini' );
-		$SiteIni = eZINI::instance( 'site.ini' );
 
-		$ConsumerKey							= $NGPushIni->variable( $Account, 'ConsumerKey' );
-		$ConsumerSecret							= $NGPushIni->variable( $Account, 'ConsumerSecret' );
+		$ConsumerKey        = $NGPushIni->variable( $Account, 'ConsumerKey' );
+		$ConsumerSecret     = $NGPushIni->variable( $Account, 'ConsumerSecret' );
 
-		$connection = new TwitterOAuth( $ConsumerKey, $ConsumerSecret );
+        $AccessToken        = $NGPushIni->variable( $Account, 'AccessToken');
+        $AccessTokenSecret  = $NGPushIni->variable( $Account, 'AccessTokenSecret');
 
-		$AdministrationUrl = '/';
-		eZURI::transformURI( $AdministrationUrl, false, 'full' );
-		$AdministrationUrl = base64_encode( $AdministrationUrl );
-		$SettingsBlock = base64_encode( $Account );
+        // If access tokens are given
+        if ($AccessToken && $AccessTokenSecret)
+        {
+            // Save request signing tokens to cache
+            ngPushBase::save_token( $Account, $AccessToken, 'request_sign_oauth_token' );
+            ngPushBase::save_token( $Account, $AccessTokenSecret, 'request_sign_oauth_token_secret' );
+            ngPushBase::save_token( $Account, $AccessToken . '%%%' . $AccessTokenSecret, 'main_token' );
+        }
+        else // Request tokens with oAuth
+        {
+            $connection = new TwitterOAuth( $ConsumerKey, $ConsumerSecret );
 
-		$temporary_credentials	= $connection->getRequestToken( 'http://' . $NGPushIni->variable( 'PushNodeSettings', 'ConnectURL' ) . '/redirect.php/' . $AdministrationUrl . '/' . $SettingsBlock . '?case=twitter' );
+            $AdministrationUrl = '/';
+            eZURI::transformURI( $AdministrationUrl, false, 'full' );
+            $AdministrationUrl = base64_encode( $AdministrationUrl );
+            $SettingsBlock = base64_encode( $Account );
 
-		//Save request signing tokens to cache
-		ngPushBase::save_token( $Account, $temporary_credentials['oauth_token'], 'request_sign_oauth_token' );
-		ngPushBase::save_token( $Account, $temporary_credentials['oauth_token_secret'], 'request_sign_oauth_token_secret' );
+            $temporary_credentials = $connection->getRequestToken( 'http://' . $NGPushIni->variable( 'PushNodeSettings', 'ConnectURL' ) . '/redirect.php/' . $AdministrationUrl . '/' . $SettingsBlock . '?case=twitter' );
 
-		$redirect_url = $connection->getAuthorizeURL( $temporary_credentials, FALSE );
+            // Save request signing tokens to cache
+            ngPushBase::save_token( $Account, $temporary_credentials['oauth_token'], 'request_sign_oauth_token' );
+            ngPushBase::save_token( $Account, $temporary_credentials['oauth_token_secret'], 'request_sign_oauth_token_secret' );
 
-		self::$response['RequestPermissionsUrl'] = $redirect_url;
+            $redirect_url = $connection->getAuthorizeURL( $temporary_credentials, FALSE );
+
+            self::$response['RequestPermissionsUrl'] = $redirect_url;
+        }
 	}
 }
 

@@ -44,7 +44,7 @@ class ngPushFacebookBase extends ngPushBase
 				if ($Account['id'] == $Id) return $Account['access_token'];
 			}
 		}
-		
+
 		//In case of an error or no account, return regular access token (post as a page admin)
 		return $Token;
 	}
@@ -53,28 +53,48 @@ class ngPushFacebookBase extends ngPushBase
 	{
 		$NGPushIni = eZINI::instance( 'ngpush.ini' );
 		$SiteIni = eZINI::instance( 'site.ini' );
-		
-		$Facebook = new Facebook( array(
-			'appId'			=> $NGPushIni->variable( $Account, 'AppAPIKey' ),
-			'secret'		=> $NGPushIni->variable( $Account, 'AppSecret' ) ) );
-		
-		$Permissions = array(
-			'publish_stream',
-			'offline_access' );
-		if ( $NGPushIni->variable( $Account, 'EntityType' ) == 'page' ) $Permissions[] =
-			'manage_pages';
 
-		$AdministrationUrl = '/';
-		eZURI::transformURI( $AdministrationUrl, false, 'full' );
-		$AdministrationUrl = base64_encode( $AdministrationUrl );
-		$SettingsBlock = base64_encode( $Account );
+        $AccessToken = $NGPushIni->variable( $Account, 'AccessToken');
 
-		$LoginUrl = $Facebook->getLoginUrl( array(
-			'cancel_url'	=> 'http://' . $NGPushIni->variable( 'PushNodeSettings', 'ConnectURL' ) . '/cancel.php',
-			'next'			=> 'http://' . $NGPushIni->variable( 'PushNodeSettings', 'ConnectURL' ) . '/redirect.php/' . $AdministrationUrl . '/' . $SettingsBlock . '?case=facebook',
-			'req_perms'		=> implode( $Permissions, ',' ),
-			'display'		=> 'popup' ) );
+        // If access tokens are given
+        if ($AccessToken)
+        {
+            //Save request signing tokens to cache
+            ngPushBase::save_token( $Account, $AccessToken, 'main_token' );
+        }
+        else // Request tokens with oAuth
+        {
+            $AdministrationUrl = '/';
+            eZURI::transformURI( $AdministrationUrl, false, 'full' );
+            $AdministrationUrl = base64_encode( $AdministrationUrl );
+            $SettingsBlock = base64_encode( $Account );
 
-		self::$response['RequestPermissionsUrl'] = $LoginUrl;
+            $redirectUrl = 'http://' . $NGPushIni->variable( 'PushNodeSettings', 'ConnectURL' ) . '/redirect.php/' . $AdministrationUrl . '/' . $SettingsBlock . '?case=facebook';
+
+            $Facebook = new Facebook( array(
+                'appId'			=> $NGPushIni->variable( $Account, 'AppAPIKey' ),
+                'secret'		=> $NGPushIni->variable( $Account, 'AppSecret' ) ) );
+
+            $Permissions = array(
+                    'publish_stream', // Or 'publish_actions'
+                    'read_stream' );
+
+            if ( $NGPushIni->variable( $Account, 'EntityType' ) == 'page' )
+            {
+                $Permissions[] = 'manage_pages';
+            }
+
+            $state = md5(uniqid(rand(), true));
+            $http = eZHTTPTool::instance();
+            $http->setSessionVariable( 'ngpush_state', $state );
+
+            $LoginUrl = $Facebook->getLoginUrl( array(
+                    'redirect_uri'  => $redirectUrl,
+                    'scope'         => implode( $Permissions, ',' ),
+                    'state'         => $state
+            ));
+
+            self::$response['RequestPermissionsUrl'] = $LoginUrl;
+        }
 	}
 }
